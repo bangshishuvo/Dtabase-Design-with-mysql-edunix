@@ -1,0 +1,202 @@
+CREATE TABLE person (id INT(20) NOT NULL PRIMARY KEY,name VARCHAR(20));
+
+INSERT INTO person
+VALUES(1,"shuvo");
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+
+SELECT * FROM customers WHERE ID =3;
+SELECT * FROM products WHERE price>200;
+SELECT * FROM products  WHERE name LIKE 's%';
+SELECT * FROM products  WHERE category =1 && price <200;
+
+SELECT * FROM products  WHERE category =1 OR category =5 ORDER BY name;
+SELECT * FROM products  WHERE category =1 OR category =5 ORDER BY namme ASC LIMIT 0,3;
+
+UPDATE AND DELET DATA:
+UPDATE products SET name ="Microsoft Surface Tablet" Where name ="Surface Tablet";
+UPDATE customers SET first_name ="shuvo",last_name ="raj bangshi" WHERE id=1;
+
+DELET FROM customers WHERE id=7;
+
+Aliases and joins:
+
+SELECT first_name AS "first name",last_name AS "last name"
+FROM customers;
+
+SELECT p.name, pc.name, p.price
+FROM product_categories AS pc, products AS p
+WHERE p.category =pc.id;
+
+SELECT p.name AS product, pc.name as category, p.price AS price
+FROM product_categories AS pc, products AS p
+WHERE p.category =pc.id
+ORDER BY pc.name;
+
+INNER JOIN: Returns all rows when there is at least one match in BOTH tables
+
+SELECT column_name(s)
+FROM table1
+INNER JOIN table2
+ON table1.column_name = table2.column_name;
+
+LEFT JOIN: Return all rows from the left table, and the matched rows from the right table
+RIGHT JOIN: Return all rows from the right table, and the matched rows from the left table
+FULL JOIN: Return all rows when there is a match in ONE of the tables
+
+SELECT customers.first_name, customers.last_name, customer_address.city,customer_address.state
+FROM customer_address
+INNER JOIN customers
+ON customer_address.customer=customers.id;
+
+
+SELECT *
+FROM customers
+LEFT JOIN orders
+ON customers.id = orders.customer
+
+
+SELECT *
+FROM customers
+RIGHT JOIN orders
+ON customers.id = orders.customer
+
+SELECT c.first_name, c.last_name, p.name
+FROM customers c
+INNER JOIN orders o ON c.id = o.customer
+INNER JOIN products p ON o.product  = p.id 
+ORDER BY c.first_name
+
+
+
+union,contact,count:
+
+UNION
+
+//MySQL UNION operator allows you to combine two or more result sets from multiple tables into a single result set. 
+//The number of columns appears in the corresponding SELECT statements must be equal.
+//The columns appear in  the corresponding positions of each SELECT statement must have the same data type or 
+  at least convertible data type.
+
+SELECT city FROM customers
+UNION
+SELECT city FROM vendors
+ORDER BY city;
+
+SELECT city FROM customers
+UNION ALL
+SELECT city FROM vendors
+ORDER BY city;
+
+SELECT city, zipcode FROM customers
+WHERE zipcode='11111'
+UNION ALL
+SELECT city, zipcode FROM vendors
+WHERE zipcode='11111'
+ORDER BY city;
+
+concat function:The CONCAT function in SQL is a String function, which is used to merge two or more strings. The Concat service converts the Null values to an Empty string when we display the result. This function is used to concatenate two strings to make a single string. The operator is used to link character strings and column string.
+
+CONCAT:
+
+SELECT id, CONCAT(first_name, ' - ', email) AS "Name & Email" FROM customers;
+
+SELECT id, CONCAT(name, ' - $', price) AS "Product & Price" FROM products;
+
+count:
+SELECT COUNT(*) FROM products;
+
+SELECT COUNT(*) FROM products
+WHERE category = 1
+
+SELECT COUNT(*) FROM products
+WHERE category = 1 && price > 200
+
+SELECT COUNT(DISTINCT category) FROM products;
+
+IN CLAUSE
+
+//Without IN Clause
+SELECT city,state FROM customer_addresses WHERE state = "MA" OR state = "MD" OR state = "FL" ORDER BY state
+
+//IN Query
+SELECT city,state FROM customer_addresses WHERE state IN("MA","MD","FL") ORDER BY state
+
+//NOT IN Query
+SELECT city,state FROM customer_addresses WHERE state NOT IN("MA","MD","FL") ORDER BY state
+
+//Join in customers table
+SELECT 
+customers.first_name AS "First Name",
+customers.last_name AS "Last Name",
+customer_addresses.city AS City,
+customer_addresses.state AS State
+FROM customer_addresses 
+INNER JOIN customers
+ON customer_addresses.customer=customers.id
+WHERE state IN("MA","MD","FL") ORDER BY state
+
+EXISTS Operator
+EXISTS is a Boolean operator which checks the subquery result and returns an either TRUE or FALSE value. It is used in combination with subquery and checks whether a row is returned through this subquery or not. This operator returns TRUE if the subquery returns single or multiple records. Otherwise, it gives a FALSE result when no records are returned.
+ SELECT name, occupation FROM customer    
+WHERE EXISTS (SELECT * FROM Orders     
+WHERE customer.cust_id = Orders.cust_id);  
+
+
+math and subqueries:
+ SELECT (1+1),(3*3);
+SELECT ROUND(2.5);
+SELECT ABS(-5);
+SELECT MAX (price) FROM products;
+ sub queries:
+SELECT (1+(SELECT 2+(SELECT 3*3)));
+SELECT name.price FROM products WHERE price > (SELECT  avg(price) FROM products ORDER BY name;
+
+SELECT NOW();
+SELECT VERSION();
+
+ORDER VS GROUP BY:
+the GROUP BY clause is applicable when we want to use aggregate functions to more than one set of rows. The ORDER BY clause is applicable when we want to get the data obtained by a query in the sorting order.
+GROUP BY FUNCTION
+
+//Without GROUP BY Function
+SELECT customer, COUNT(*) AS "Number of Orders" FROM orders WHERE customer = 1
+
+//With GROUP BY Function
+SELECT customer, COUNT(*) AS "Number of Orders" FROM orders GROUP BY customer
+
+//Join customers table
+SELECT 
+orders.customer AS "Customer ID",
+customers.first_name AS "First Name",
+customers.last_name AS "Last Name",
+COUNT(*) AS "Number of Orders" 
+FROM orders 
+INNER JOIN customers
+ON orders.customer=customers.id
+GROUP BY customer
+
+//Valid SQL (add other columns to group by)
+SELECT 
+orders.customer AS "Customer ID",
+customers.first_name AS "First Name",
+customers.last_name AS "Last Name",
+COUNT(*) AS "Number of Orders" 
+FROM orders 
+INNER JOIN customers
+ON orders.customer=customers.id
+GROUP BY orders.customer,customers.first_name,customers.last_name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
